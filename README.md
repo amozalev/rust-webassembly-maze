@@ -1,0 +1,1 @@
+# Rust + webassembly maze generator
