@@ -1,4 +1,5 @@
 const path = require("path");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 
@@ -12,6 +13,10 @@ module.exports = {
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
+            {
+                test: /\.css$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader']
+            }
         ],
     },
     resolve: {
@@ -23,10 +28,12 @@ module.exports = {
     },
     mode: "development",
     plugins: [
+        new MiniCssExtractPlugin(),
         new CopyWebpackPlugin({
             patterns: [
-                {from: "./index.html", to: "./"}
+                {from: "./index.html", to: "./"},
+                { from: 'style.css', to: './' }
             ]
-        })
+        }),
     ]
 }

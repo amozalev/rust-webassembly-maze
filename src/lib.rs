@@ -11,8 +11,8 @@ pub struct Maze {
 
 #[wasm_bindgen]
 impl Maze {
-    pub fn new() -> Self {
-        Maze { width: 10 }
+    pub fn new(width: usize) -> Self {
+        Maze { width }
     }
 }
 
