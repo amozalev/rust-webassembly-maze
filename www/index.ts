@@ -1,11 +1,17 @@
 import init, {Maze} from "rust-webassembly-maze";
 
-init().then(_ => {
+enum Border {
+    North = 0b0001,
+    East = 0b0010,
+    South = 0b0100,
+    West = 0b1000,
+}
+
+init().then(wasm => {
     const WORLD_WIDTH = 20;
     const CELL_SIZE = 20;
 
     const maze = Maze.new(WORLD_WIDTH);
-    console.log('==maze width:', maze.width);
 
     const canvas = <HTMLCanvasElement>document.getElementById("maze");
     canvas.height = WORLD_WIDTH * CELL_SIZE;
@@ -16,15 +22,31 @@ init().then(_ => {
     const drawGrid = () => {
         ctx.beginPath();
 
-        for (let i = 0; i <= WORLD_WIDTH; i++) {
-            ctx.moveTo(0, i * CELL_SIZE);
-            ctx.lineTo(WORLD_WIDTH * CELL_SIZE, i * CELL_SIZE);
-        }
+        const mazePtr = maze.get_maze();
+        const mazeCells = new Uint32Array(wasm.memory.buffer, mazePtr, maze.size);
 
-        for (let j = 0; j <= WORLD_WIDTH; j++) {
-            ctx.moveTo(j * CELL_SIZE, 0);
-            ctx.lineTo(j * CELL_SIZE, WORLD_WIDTH * CELL_SIZE);
-        }
+        mazeCells.forEach((cellBorder, ind) => {
+            const x = ind % WORLD_WIDTH * CELL_SIZE;
+            const y = Math.floor(ind / WORLD_WIDTH) * CELL_SIZE;
+
+            if (~cellBorder & Border.North) {
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + CELL_SIZE, y);
+            }
+            if (~cellBorder & Border.South) {
+                ctx.moveTo(x, y + CELL_SIZE);
+                ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+            }
+            if (~cellBorder & Border.West) {
+                ctx.moveTo(x, y);
+                ctx.lineTo(x, y + CELL_SIZE);
+            }
+            if (~cellBorder & Border.East) {
+                ctx.moveTo(x + CELL_SIZE, y);
+                ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+            }
+
+        });
 
         ctx.stroke();
     }
