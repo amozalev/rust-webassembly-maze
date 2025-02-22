@@ -1,4 +1,4 @@
-use rand::{thread_rng, Rng};
+use rand::Rng;
 use wasm_bindgen::prelude::*;
 use wee_alloc::WeeAlloc;
 
@@ -40,36 +40,31 @@ impl Maze {
         maze
     }
 
-    fn has_neighbor(ind: usize, maze_size: usize) -> bool {
-        ind > 0 && ind < maze_size
-    }
-
     fn generate_maze(&mut self, width: usize) {
         for i in 0..self.size {
             let mut neighbors: Vec<Neighbor> = vec![];
 
-            let row = i / width;
-
-            if i >= width && Self::has_neighbor(i - width, self.size) {
+            let neighbor_ind = i - width;
+            if i >= width && neighbor_ind < self.size {
                 neighbors.push(Neighbor(
                     Border::North as usize,
-                    i - width,
+                    neighbor_ind,
                     Border::South as usize,
                 ));
             }
-            if Self::has_neighbor(i + 1, self.size) && row == ((i + 1) / width) {
+
+            let row = i / width;
+            let neighbor_ind = i + 1;
+            let neighbor_row = neighbor_ind / width;
+            if neighbor_ind > 0 && neighbor_ind < self.size && row == neighbor_row {
                 neighbors.push(Neighbor(
                     Border::East as usize,
-                    i + 1,
+                    neighbor_ind,
                     Border::West as usize,
                 ));
             }
 
-            let num = if neighbors.len() > 0 {
-                thread_rng().gen_range(0..neighbors.len())
-            } else {
-                0
-            };
+            let num = rand::thread_rng().gen_range(0..neighbors.len().max(1));
 
             if neighbors.get(num).is_some() {
                 let neighbor = &neighbors[num];
