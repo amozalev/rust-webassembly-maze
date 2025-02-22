@@ -27,24 +27,26 @@ init().then(wasm => {
         const mazeCells = new Uint32Array(wasm.memory.buffer, mazePtr, maze.size);
 
         mazeCells.forEach((cellBorder, ind) => {
-            const x = ind % WORLD_WIDTH * CELL_SIZE;
-            const y = Math.floor(ind / WORLD_WIDTH) * CELL_SIZE;
+            const x1 = ind % WORLD_WIDTH * CELL_SIZE;
+            const y1 = Math.floor(ind / WORLD_WIDTH) * CELL_SIZE;
+            const x2 = x1 + CELL_SIZE;
+            const y2 = y1 + CELL_SIZE;
 
             if (~cellBorder & Border.North) {
-                ctx.moveTo(x, y);
-                ctx.lineTo(x + CELL_SIZE, y);
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y1);
             }
             if (~cellBorder & Border.South) {
-                ctx.moveTo(x, y + CELL_SIZE);
-                ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+                ctx.moveTo(x1, y2);
+                ctx.lineTo(x2, y2);
             }
             if (~cellBorder & Border.West) {
-                ctx.moveTo(x, y);
-                ctx.lineTo(x, y + CELL_SIZE);
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x1, y2);
             }
             if (~cellBorder & Border.East) {
-                ctx.moveTo(x + CELL_SIZE, y);
-                ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+                ctx.moveTo(x2, y1);
+                ctx.lineTo(x2, y2);
             }
 
         });
