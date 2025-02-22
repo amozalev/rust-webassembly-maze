@@ -1,4 +1,4 @@
-import init, {Maze} from "rust-webassembly-maze";
+import init, {Maze, BinaryTree} from "rust-webassembly-maze";
 
 enum Border {
     North = 0b0001,
@@ -12,6 +12,7 @@ init().then(wasm => {
     const CELL_SIZE = 20;
 
     const maze = Maze.new(WORLD_WIDTH);
+    BinaryTree.generate_maze(maze);
 
     const canvas = <HTMLCanvasElement>document.getElementById("maze");
     canvas.height = WORLD_WIDTH * CELL_SIZE;
