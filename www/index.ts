@@ -20,6 +20,19 @@ init().then(wasm => {
 
     const ctx = canvas.getContext("2d");
 
+    const reloadBtn = document.getElementById('maze__reload');
+    if (reloadBtn) {
+        reloadBtn.addEventListener('click', () => {
+
+            maze.clear_maze();
+            BinaryTree.generate_maze(maze);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            paint();
+        });
+    }
+
+
     const drawGrid = () => {
         ctx.beginPath();
 

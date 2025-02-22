@@ -43,6 +43,12 @@ impl Maze {
         Self { width, size, grid }
     }
 
+    pub fn clear_maze(&mut self) {
+        for i in 0..self.size {
+            self.grid[i].0 = 0b0000;
+        }
+    }
+
     pub fn get_maze(&self) -> *const Cell {
         self.grid.as_ptr()
     }
